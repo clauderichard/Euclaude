@@ -5,31 +5,50 @@ import Shape
 
 
 
-
-
 --------------------------------------------------------------------------------
--- Definition of generators (functions)
+-- Definition of generators (the data types are all wrappers of functions)
 --------------------------------------------------------------------------------
+
+-- These 2 types are just shorthand for
+-- functions taking 3 and 6 real-valued arguments respectively,
+-- and returning a real number.
 type R3R = R -> R -> R -> R
 type R6R = R -> R -> R -> R -> R -> R -> R
 
-data F2 =
-    F2L R3R    -- use lengths only
-  | F2A R3R    -- use angles only
-  | F2LA R6R   -- use angles and lengths
+-- F3L f means f is applied to the lengths of the sides of the triangle.
+-- F3A f means f is applied to the angles of the triangle.
+-- F3LA f means f is applied to both of the above.
 data F3 =
     F3L R3R    -- use lengths only
   | F3A R3R    -- use angles only
   | F3LA R6R   -- use angles and lengths
 
+-- F2 is the same as F3 except that the function should be symmetric
+-- in the last 2 arguments (a bit different for F2LA but whatever)
+-- so that switching the last 2 arguments the function would return the same result.
+data F2 =
+    F2L R3R    -- use lengths only
+  | F2A R3R    -- use angles only
+  | F2LA R6R   -- use angles and lengths
+  
+-- Generator that can be used to generate a point out of a triangle
 data GenPt = GenPt F2                  -- Triangle -> Point
+
 -- diagonal first, rest second
+-- Edit: what does this comment mean anyway?
+-- Generator that can be used to generate 3 points out of a triangle
 data GenPt3 = GenPt3 F2 F2             -- Triangle -> (Point,Point,Point)
+-- Generator that can be used to generate a real number out of a triangle
 data GenR = GenR F3                    -- Triangle -> R
+-- Generator that can be used to generate 3 real numbers out of a triangle
 data GenR3 = GenR3 F2                  -- Triangle -> (R,R,R)
+-- Generator that can be used to generate a circle out of a triangle
 data GenCirc = GenCirc GenPt GenR      -- Triangle -> Circle
+-- Generator that can be used to generate 3 circles out of a triangle
 data GenCirc3 = GenCirc3 GenPt3 GenR3  -- Triangle -> (Circle,Circle,Circle)
 
+-- Take a F2 and evaluate the function on the triangle,
+-- using the lengths, angles, or both, depending on the F2 choice.
 f2Eval :: F2 -> Triangle -> (R,R,R)
 f2Eval (F2L f) t = (f g h i, f h i g, f i g h)
   where (g,h,i) = triangleOppositeSideLengths t
@@ -39,6 +58,7 @@ f2Eval (F2LA f) t = (f a b c g h i, f b c a h i g, f c a b i g h)
   where (a,b,c) = triangleOppositeSideLengths t
         (g,h,i) = triangleAnglesFromLengths (a,b,c)
         
+-- Same as f2Eval but for F3.
 f3Eval :: F3 -> Triangle -> R
 f3Eval (F3L f) t = f g h i
   where (g,h,i) = triangleOppositeSideLengths t
@@ -91,6 +111,9 @@ triangleAreaFromLengths (a,b,c) = sqrt (s*(s-a)*(s-b)*(s-c))
 
 --------------------------------------------------------------------------------
 -- Generate shapes using generators
+-- If you have a generator, and an actual Triangle,
+-- then you can use one of these functions to return the actual point or shape
+-- that the generator is supposed to generate from the triangle.
 --------------------------------------------------------------------------------
 point :: GenPt -> Triangle -> Point
 point (GenPt f) t@(Triangle a b c) = pointsWeightedAverage [x,y,z] [a, b, c]
@@ -107,7 +130,10 @@ triangle (GenPt3 f2 g2) t@(Triangle a b c) = Triangle x y z
 points :: GenPt3 -> Triangle -> [Point]
 points g t = [x,y,z]
   where Triangle x y z = triangle g t
-  
+
+-- Given 2 generators, one for the start point of a line,
+-- and the other generator is for the end point of each line,
+-- return 
 lineSegment :: GenPt -> GenPt -> Triangle -> Line
 lineSegment f g t = Line (point f t) (point g t)
 
@@ -173,7 +199,7 @@ circles gp gr t = [Circle x r1, Circle y r2, Circle z r3]
 
 --------------------------------------------------------------------------------
 -- How to make a generator
---------------------------------------------------------------------------------  
+--------------------------------------------------------------------------------
 genPtL :: R3R -> GenPt
 genPtL = GenPt . F2L
 genPtA :: R3R -> GenPt

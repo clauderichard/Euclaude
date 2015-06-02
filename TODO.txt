@@ -1,7 +1,14 @@
 1. Instead of animating the triangle,
     start with equilateral triangle and use mouse to drag its corners.
-2. Make more flexible structure so you can define generators outside Haskell code.
-    Define it in a string, so Haskell can read the string and make a generator.
-3. Make structure to define demos outside Haskell, in files.
-4. Make new/open menu, use it to open/save generators and demos.
-5. Make a users manual explaining how to make the files.
+2. Standardize to the following center demos:
+	centroid
+	orthocenter
+	circumcenter
+	incenter
+	9 point center
+   Choose them from a menu in the app. Start with 9 point center by default.
+3. Add more standard demos for future improvements.
+	Napoleon triangle center, both of them
+	Nagel point
+	Symmedian point
+	etc.

@@ -7,7 +7,7 @@ import Control.Monad
 import Draw
 import Gen
 import Shape
-import Animator
+import Trihandle
 
 
 windowTitle :: String
@@ -18,45 +18,46 @@ main :: IO ()
 main = do
   (_progName, _args) <- GL.getArgsAndInitialize
   _window <- GL.createWindow windowTitle
-  anim <- newIORef makeTriangleAnimator
-  delta <- newIORef (0.02::R)
-  pos <- newIORef (0::R, 0::R)
-  GL.keyboardMouseCallback GL.$= Just (keyboardMouse delta pos)
-  GL.idleCallback GL.$= Just (idle delta anim)
-  GL.displayCallback GL.$= display anim pos
+  thandle <- newIORef makeTrihandle
+  GL.keyboardMouseCallback GL.$= Just (keyboardMouse thandle)
+  GL.displayCallback GL.$= display thandle
   GL.reshapeCallback GL.$= Just reshape
+  reshape (GL.Size 300 300)
   GL.mainLoop
   
-keyboardMouse :: IORef R -> IORef (R, R) -> GL.KeyboardMouseCallback
-keyboardMouse a p key GL.Down _ _ = case key of
-  (GL.Char ' ') -> a GL.$~! negate
-  (GL.Char '+') -> a GL.$~! (* 2)
-  (GL.Char '-') -> a GL.$~! (/ 2)
-  (GL.SpecialKey GL.KeyLeft ) -> p GL.$~! \(x,y) -> (x-0.1,y)
-  (GL.SpecialKey GL.KeyRight) -> p GL.$~! \(x,y) -> (x+0.1,y)
-  (GL.SpecialKey GL.KeyUp   ) -> p GL.$~! \(x,y) -> (x,y+0.1)
-  (GL.SpecialKey GL.KeyDown ) -> p GL.$~! \(x,y) -> (x,y-0.1)
-  _ -> return ()
-keyboardMouse _ _ _ _ _ _ = return ()
+transInterval :: (Integral i) => i -> i -> R -> R -> i -> R
+transInterval oldMin oldMax newMin newMax oldX = numer / denom
+  where numer = newMin * fromIntegral (oldMax-oldX) + newMax * fromIntegral (oldX-oldMin)
+        denom = fromIntegral $ oldMax - oldMin
+
+posFromGL :: GL.Position -> Point
+posFromGL (GL.Position a b) = Point a' b'
+  where oldMin = 0
+        oldMax = 300
+        newMin = -1
+        newMax = 1
+        a' = transInterval oldMin oldMax newMin newMax $ a
+        b' = transInterval oldMin oldMax newMax newMin $ b
   
-idle :: IORef R -> IORef TriangleAnimator -> GL.IdleCallback
-idle delta anim = do
-  --anim GL.$~! (id)
-  d <- GL.get delta
-  anim GL.$~! (stepTriangleAnimator d)
-  GL.postRedisplay Nothing
- 
+keyboardMouse :: IORef Trihandle -> GL.KeyboardMouseCallback
+keyboardMouse thandle key GL.Down _ position = do
+    thandle GL.$~! trihandleMoveDown (posFromGL position)
+    display thandle
+--keyboardMouse thandle key GL.Up _ position = do
+--    thandle GL.$~! trihandleMoveUp (posFromGL position)
+--    display thandle
+keyboardMouse _ _ _ _ _ = return ()
+  
 reshape :: GL.ReshapeCallback
 reshape size = do
   GL.viewport GL.$= (GL.Position 0 0, size)
   GL.postRedisplay Nothing
  
-display :: IORef TriangleAnimator -> IORef (R,R) -> GL.DisplayCallback
-display anim pos = do
+display :: IORef Trihandle -> GL.DisplayCallback
+display thandle = do
     GL.clear [GL.ColorBuffer]
-    a <- readIORef anim
-    p <- readIORef pos
-    demo $ animatedTriangle $ moveTriangleAnimator p a
+    th <- readIORef thandle
+    demo $ trihandleTriangle th
     GL.flush
 
 draw col prop t = drawColouredShapes col [prop t]

@@ -22,6 +22,8 @@ main = do
   GL.keyboardMouseCallback GL.$= Just (keyboardMouse thandle)
   GL.displayCallback GL.$= display thandle
   GL.reshapeCallback GL.$= Just reshape
+  GL.motionCallback GL.$= Just (mouseMotion thandle)
+  GL.passiveMotionCallback GL.$= Just (mouseMotion thandle)
   reshape (GL.Size 300 300)
   GL.mainLoop
   
@@ -41,13 +43,17 @@ posFromGL (GL.Position a b) = Point a' b'
   
 keyboardMouse :: IORef Trihandle -> GL.KeyboardMouseCallback
 keyboardMouse thandle key GL.Down _ position = do
-    thandle GL.$~! trihandleMoveDown (posFromGL position)
+    thandle GL.$~! trihandleDown (posFromGL position)
     display thandle
---keyboardMouse thandle key GL.Up _ position = do
---    thandle GL.$~! trihandleMoveUp (posFromGL position)
---    display thandle
-keyboardMouse _ _ _ _ _ = return ()
-  
+keyboardMouse thandle key GL.Up _ position = do
+    thandle GL.$~! trihandleUp (posFromGL position)
+    display thandle
+
+mouseMotion :: IORef Trihandle -> GL.MotionCallback
+mouseMotion thandle position = do
+    thandle GL.$~! trihandleMove (posFromGL position)
+    display thandle
+
 reshape :: GL.ReshapeCallback
 reshape size = do
   GL.viewport GL.$= (GL.Position 0 0, size)
@@ -67,7 +73,7 @@ draw col prop t = drawColouredShapes col [prop t]
 -- Demos
 --------------------------------------------------------------------------------
 demo :: Triangle -> IO ()
-demo = demoEulerLine
+demo = demoOrthocenter
 
 
 demoMittenpunkt :: Triangle -> IO ()

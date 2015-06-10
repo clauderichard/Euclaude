@@ -1,14 +1,19 @@
-1. Instead of animating the triangle,
-    start with equilateral triangle and use mouse to drag its corners.
-2. Standardize to the following center demos:
+1. Add graphics functionality to show symbols for:
+    orthogonality
+    length equality
+    angle equality
+    parallel lines
+2. Standardize to the following demos:
+	9 point circle
 	centroid
 	orthocenter
 	circumcenter
 	incenter
-	9 point center
-   Choose them from a menu in the app. Start with 9 point center by default.
-3. Add more standard demos for future improvements.
-	Napoleon triangle center, both of them
+   Choose them from a menu in the app. Start with 9 point circle by default.
+3. Add all my favorite demos:
+	Napoleon triangle + center, both inner and outer.
 	Nagel point
 	Symmedian point
-	etc.
+	Mittenpunkt
+	Euler line
+	Fermat point

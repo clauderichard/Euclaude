@@ -66,23 +66,33 @@ getCircleDrawCorners (Circle (Point x y) r) =
 rToGLfloat :: R -> GL.GLfloat
 rToGLfloat = realToFrac
 
+colourEmpty :: R
+colourEmpty = 0.0
+colourFull :: R
+colourFull = 1.0
+colourPrime :: R -> R
+colourPrime r = r * 0.6
+
+colourFaded :: Colour -> Colour
+colourFaded (Colour r g b) = Colour (colourPrime r) (colourPrime g) (colourPrime b)
+
 data Colour = Colour R R R
 colourBlack :: Colour
-colourBlack = Colour 0.0 0.0 0.0
+colourBlack = Colour colourEmpty colourEmpty colourEmpty
 colourRed :: Colour
-colourRed = Colour 1.0 0.0 0.0
+colourRed = Colour colourFull colourEmpty colourEmpty
 colourGreen :: Colour
-colourGreen = Colour 0.0 1.0 0.0
+colourGreen = Colour colourEmpty colourFull colourEmpty
 colourBlue :: Colour
-colourBlue = Colour 0.0 0.0 1.0
+colourBlue = Colour colourEmpty colourEmpty colourFull
 colourYellow :: Colour
-colourYellow = Colour 1.0 1.0 0.0
+colourYellow = Colour colourFull colourFull colourEmpty
 colourMagenta :: Colour
-colourMagenta = Colour 1.0 0.0 1.0
+colourMagenta = Colour colourFull colourEmpty colourFull
 colourCyan :: Colour
-colourCyan = Colour 0.0 1.0 1.0
+colourCyan = Colour colourEmpty colourFull colourFull
 colourWhite :: Colour
-colourWhite = Colour 1.0 1.0 1.0
+colourWhite = Colour colourFull colourFull colourFull
 
 setColour :: Colour -> IO ()
 setColour (Colour r g b) = GL.color $

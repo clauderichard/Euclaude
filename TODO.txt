@@ -1,16 +1,21 @@
-1. Add graphics functionality to show symbols for:
+1. Fix the viewport code (or add it, it doesn't even exist)
+2. Make the generator code more comprehensible.
+    Document the functions better for Cevian generators and Claudian generators.
+    Make a file of triangle properties (include the 2 Napoleon triangles in there)
+    The above file should use generators whenever possible.
+3. Add graphics functionality to show symbols for:
     orthogonality
     length equality
     angle equality
     parallel lines
-2. Standardize to the following demos:
+4. Standardize to the following demos:
 	9 point circle
 	centroid
 	orthocenter
 	circumcenter
 	incenter
    Choose them from a menu in the app. Start with 9 point circle by default.
-3. Add all my favorite demos:
+5. Add all my favorite demos:
 	Napoleon triangle + center, both inner and outer.
 	Nagel point
 	Symmedian point

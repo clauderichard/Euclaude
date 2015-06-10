@@ -76,6 +76,12 @@ demo :: Triangle -> IO ()
 demo = demoOrthocenter
 
 
+--demoNapoleonTriangleOuter :: Triangle -> IO ()
+--demoNapoleonTriangleOuter t = do
+--    draw colourRed (triangles outerEquilateralTriangles) t
+--    draw colourGreen (triangle napoleonTriangle) t
+--    draw colourWhite id t
+
 demoMittenpunkt :: Triangle -> IO ()
 demoMittenpunkt t = do
     draw colourWhite id t
@@ -104,10 +110,13 @@ demoCircumcircle t = do
     draw colourGreen (circle gCircumcenter gCircumradius) t
 
 demoOrthocenter t = do
-    draw colourRed (lineSegments (gCevianIntersects gOrthocenter) (gCevianIntersects gCentroid)) t
+    draw (colourFaded colourWhite)
+      (lineSegments (gCevianIntersects gOrthocenter) (gCevianIntersects gCentroid))
+      t
     draw colourWhite id t
+    -- Need both cevians and rays in case the point is outside the triangle
+    draw (colourFaded colourCyan) (rays gOrthocenter gId) t
     draw colourCyan (cevians gOrthocenter) t
-    draw colourCyan (rays gOrthocenter gId) t
     draw colourCyan (point gOrthocenter) t
 
 demoSymmedian t = do
@@ -121,7 +130,9 @@ demoNagel t = do
     draw colourCyan (point gNagel) t
     
 demoEulerLine t = do
-    draw colourRed (lineSegments (gCevianIntersects gOrthocenter) (gCevianIntersects gCentroid)) t
+    draw (colourFaded colourWhite)
+      (lineSegments (gCevianIntersects gOrthocenter) (gCevianIntersects gCentroid))
+      t
     draw colourWhite id t
     draw colourCyan (cevians gOrthocenter) t
     draw colourCyan (rays gOrthocenter gId) t

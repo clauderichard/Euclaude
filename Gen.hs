@@ -23,9 +23,6 @@ data F3 =
   | F3A R3R    -- use angles only
   | F3LA R6R   -- use angles and lengths
 
--- F2 is the same as F3 except that the function should be symmetric
--- in the last 2 arguments (a bit different for F2LA but whatever)
--- so that switching the last 2 arguments the function would return the same result.
 data F2 =
     F2L R3R    -- use lengths only
   | F2A R3R    -- use angles only

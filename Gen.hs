@@ -9,6 +9,11 @@ import Shape
 -- Definition of generators (the data types are all wrappers of functions)
 --------------------------------------------------------------------------------
 
+-- Defines a triangle centre by its barycentrics function.
+-- The function takes in the 3 sidelengths of the triangle in order,
+--   and returns the first barycentric.
+data BarycentricFunction = BarycentricFunction (R -> R -> R -> R)
+
 -- These 2 types are just shorthand for
 -- functions taking 3 and 6 real-valued arguments respectively,
 -- and returning a real number.
@@ -243,16 +248,13 @@ gId = genPt3L (\a b c -> 1) (\a b c -> 0)
 --------------------------------------------------------------------------------
 -- Generators
 --------------------------------------------------------------------------------
-gCentroid = genPtL (\a b c -> 1)
-gIncenter = genPtL (\a b c -> a)
-gInradius = genRL (\a b c -> 2 * triangleAreaFromLengths(a,b,c) / (a+b+c))
-gOutcenters = genPt3L (\a b c -> -a) (\a b c -> a)
-gOutradii = genR3L (\a b c -> 2 * triangleAreaFromLengths(a,b,c) / (b+c-a))
-gCircumcenter = genPtA (\a b c -> sin(2*a))
+gCentroid = BarycentricFunction $ \a b c -> 1
+gIncenter = BarycentricFunction $ \a b c -> a
+gInradius = BarycentricFunction $ \a b c -> 2 * triangleAreaFromLengths(a,b,c) / (a+b+c)
+gCircumcenter = BarycentricFunction $ \a b c -> sin(2 * (angleA a b c))
 gCircumradius = genRL (\a b c -> a*b*c / (4 * triangleAreaFromLengths(a,b,c)))
 gOrthocenter = genPtA (\a b c -> tan a)
 gNinePointCenter = genPtLA (\a b c d e f -> a*cos(e-f))
-gNinePointRadius = genRL (\a b c -> a*b*c / (8 * triangleAreaFromLengths(a,b,c)))
 gSymmedian = genPtL (\a b c -> a*a)
 gGergonne = genPtL (\a b c -> 1/(b+c-a))
 gNagel = genPtL (\a b c -> b+c-a)
@@ -261,6 +263,10 @@ gSpieker = genPtL (\a b c -> b+c)
 gFeuerbach = genPtL (\a b c -> (b+c-a)*(b-c)*(b-c))
 gNapoleonPoint1 = genPtLA (\a b c d e f -> a/sin(d+pi/6))
 gExeter = genPtL (\a b c -> a^2 * (b^4 + c^4 - a^4))
+
+gOutcenters = BarycentricFunction (\a b c -> -a) (\a b c -> a)
+gOutradii = BarycentricFunction $ \a b c -> 2 * triangleAreaFromLengths(a,b,c) / (b+c-a)
+gNinePointRadius = genRL (\a b c -> a*b*c / (8 * triangleAreaFromLengths(a,b,c)))
 
 --------------------------------------------------------------------------------
 -- Generators

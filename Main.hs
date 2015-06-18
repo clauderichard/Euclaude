@@ -4,10 +4,9 @@ where
 import qualified Graphics.UI.GLUT as GL
 import Data.IORef
 import Control.Monad
-import Draw
-import Gen
-import Shape
+import Demos
 import Trihandle
+import Shape
 
 
 windowTitle :: String
@@ -27,7 +26,7 @@ main = do
   reshape (GL.Size 300 300)
   GL.mainLoop
   
-transInterval :: (Integral i) => i -> i -> R -> R -> i -> R
+transInterval :: (Integral i, Floating r) => i -> i -> r -> r -> i -> r
 transInterval oldMin oldMax newMin newMax oldX = numer / denom
   where numer = newMin * fromIntegral (oldMax-oldX) + newMax * fromIntegral (oldX-oldMin)
         denom = fromIntegral $ oldMax - oldMin
@@ -63,97 +62,6 @@ display :: IORef Trihandle -> GL.DisplayCallback
 display thandle = do
     GL.clear [GL.ColorBuffer]
     th <- readIORef thandle
-    demo $ trihandleTriangle th
+    mainDemo $ trihandleTriangle th
     GL.flush
 
-draw col prop t = drawColouredShapes col [prop t]
-    
-    
---------------------------------------------------------------------------------
--- Demos
---------------------------------------------------------------------------------
-demo :: Triangle -> IO ()
-demo = demoOrthocenter
-
-
---demoNapoleonTriangleOuter :: Triangle -> IO ()
---demoNapoleonTriangleOuter t = do
---    draw colourRed (triangles outerEquilateralTriangles) t
---    draw colourGreen (triangle napoleonTriangle) t
---    draw colourWhite id t
-
-demoMittenpunkt :: Triangle -> IO ()
-demoMittenpunkt t = do
-    draw colourWhite id t
-    draw colourRed (cevians gCentroid) t
-    draw colourRed (point gCentroid) t
-    draw colourGreen (points gOutcenters) t
-    draw colourGreen (circles gOutcenters gOutradii) t
-    draw colourCyan (rays gMittenpunkt gOutcenters) t
-    draw colourCyan (point gMittenpunkt) t
-
-demoCentroid :: Triangle -> IO ()
-demoCentroid t = do
-    draw colourWhite id t
-    draw colourRed (cevians gCentroid) t
-    draw colourRed (point gCentroid) t
-
-demoIncircle t = do
-    draw colourWhite id t
-    draw colourYellow (rays gIncenter gId) t
-    draw colourYellow (point gIncenter) t
-    draw colourYellow (circle gIncenter gInradius) t
-
-demoCircumcircle t = do
-    draw colourWhite id t
-    draw colourCyan (rays gCircumcenter (gCevianIntersects gCentroid)) t
-    draw colourGreen (circle gCircumcenter gCircumradius) t
-
-demoOrthocenter t = do
-    draw (colourFaded colourWhite)
-      (lineSegments (gCevianIntersects gOrthocenter) (gCevianIntersects gCentroid))
-      t
-    draw colourWhite id t
-    -- Need both cevians and rays in case the point is outside the triangle
-    draw (colourFaded colourCyan) (rays gOrthocenter gId) t
-    draw colourCyan (cevians gOrthocenter) t
-    draw colourCyan (point gOrthocenter) t
-
-demoSymmedian t = do
-    draw colourWhite id t
-    draw colourCyan (cevians gSymmedian) t
-    draw colourCyan (point gSymmedian) t
-
-demoNagel t = do
-    draw colourWhite id t
-    draw colourCyan (cevians gNagel) t
-    draw colourCyan (point gNagel) t
-    
-demoEulerLine t = do
-    draw (colourFaded colourWhite)
-      (lineSegments (gCevianIntersects gOrthocenter) (gCevianIntersects gCentroid))
-      t
-    draw colourWhite id t
-    draw colourCyan (cevians gOrthocenter) t
-    draw colourCyan (rays gOrthocenter gId) t
-    draw colourCyan (point gOrthocenter) t
-    draw colourGreen (cevians gCentroid) t
-    draw colourGreen (point gCentroid) t
-    draw colourBlue (point gCircumcenter) t
-    draw colourBlue (circle gCircumcenter gCircumradius) t
-    draw colourMagenta (point gExeter) t
-    draw colourYellow (lineSegment gOrthocenter gExeter) t
-    draw colourYellow (lineSegment gCircumcenter gExeter) t
-    draw colourYellow (point gNinePointCenter) t
-    draw colourYellow (circle gNinePointCenter gNinePointRadius) t
-
-demoNinePointCircle t = do
-    draw colourRed (lineSegments (gCevianIntersects gOrthocenter) (gCevianIntersects gCentroid)) t
-    draw colourWhite id t
-    draw colourCyan (cevians gOrthocenter) t
-    draw colourCyan (rays gOrthocenter gId) t
-    draw colourCyan (points (gCevianIntersects gOrthocenter)) t
-    draw colourGreen (points (gCevianIntersects gCentroid)) t
-    draw colourBlue (raysMidpoints gOrthocenter gId) t
-    draw colourYellow (point gNinePointCenter) t
-    draw colourYellow (circle gNinePointCenter gNinePointRadius) t

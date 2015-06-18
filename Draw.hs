@@ -73,26 +73,26 @@ colourFull = 1.0
 colourPrime :: R -> R
 colourPrime r = r * 0.6
 
-colourFaded :: Colour -> Colour
-colourFaded (Colour r g b) = Colour (colourPrime r) (colourPrime g) (colourPrime b)
+faded :: Colour -> Colour
+faded (Colour r g b) = Colour (colourPrime r) (colourPrime g) (colourPrime b)
 
 data Colour = Colour R R R
-colourBlack :: Colour
-colourBlack = Colour colourEmpty colourEmpty colourEmpty
-colourRed :: Colour
-colourRed = Colour colourFull colourEmpty colourEmpty
-colourGreen :: Colour
-colourGreen = Colour colourEmpty colourFull colourEmpty
-colourBlue :: Colour
-colourBlue = Colour colourEmpty colourEmpty colourFull
-colourYellow :: Colour
-colourYellow = Colour colourFull colourFull colourEmpty
-colourMagenta :: Colour
-colourMagenta = Colour colourFull colourEmpty colourFull
-colourCyan :: Colour
-colourCyan = Colour colourEmpty colourFull colourFull
-colourWhite :: Colour
-colourWhite = Colour colourFull colourFull colourFull
+black :: Colour
+black = Colour colourEmpty colourEmpty colourEmpty
+red :: Colour
+red = Colour colourFull colourEmpty colourEmpty
+green :: Colour
+green = Colour colourEmpty colourFull colourEmpty
+blue :: Colour
+blue = Colour colourEmpty colourEmpty colourFull
+yellow :: Colour
+yellow = Colour colourFull colourFull colourEmpty
+magenta :: Colour
+magenta = Colour colourFull colourEmpty colourFull
+cyan :: Colour
+cyan = Colour colourEmpty colourFull colourFull
+white :: Colour
+white = Colour colourFull colourFull colourFull
 
 setColour :: Colour -> IO ()
 setColour (Colour r g b) = GL.color $
@@ -102,7 +102,8 @@ setPoint :: Point -> IO ()
 setPoint (Point x y) = GL.vertex $
     GL.Vertex3 (rToGLfloat x) (rToGLfloat y) (0::GL.GLfloat)
 
-drawColouredShapes :: Shape a => Colour -> [a] -> IO ()
-drawColouredShapes c ss = do
+draw :: Shape a => Colour -> a -> IO ()
+draw c s = do
     setColour c
-    mapM_ drawShape ss
+    drawShape s
+

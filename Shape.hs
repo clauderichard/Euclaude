@@ -1,3 +1,15 @@
+--------------------------------------------------------------------------------
+-- Contains definitions for various shapes in Euclidean geometry.
+-- Includes:
+--   * Real number (type definition to avoid confusion between float and double)
+--   * Point (in terms of cartesian coordinates)
+--   * Line (in terms of 2 points)
+--   * Various polygons (in terms of points)
+--   * Circle (in terms of center and radius)
+--   * Polygon class (map between a polygon datatype and a list of points)
+--   * Miscellaneous functions dealing with only the above
+--------------------------------------------------------------------------------
+
 module Shape
 where
 

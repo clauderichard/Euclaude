@@ -1,3 +1,9 @@
+--------------------------------------------------------------------------------
+-- Contains the draw function, which takes in a colour, and
+-- a point, line, polygon or circle (or a list of them),
+-- and draws it with OpenGL.
+--------------------------------------------------------------------------------
+
 module Draw
 where
 

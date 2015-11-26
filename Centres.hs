@@ -1,3 +1,8 @@
+--------------------------------------------------------------------------------
+-- Contains functions that take in a Triangle, and output a Point
+-- that is some special center of that triangle.
+--------------------------------------------------------------------------------
+
 module Centres
 ( centroid
 , incentre

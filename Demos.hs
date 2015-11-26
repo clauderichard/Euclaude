@@ -1,3 +1,9 @@
+--------------------------------------------------------------------------------
+-- Contains predefined demos, which are functions that take in a Triangle,
+-- and draw some of its properties using the Draw module.
+-- (the list of properties and colours is different for each demo)
+--------------------------------------------------------------------------------
+
 module Demos
 ( mainDemo
 ) where

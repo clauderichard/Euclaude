@@ -1,9 +1,16 @@
+--------------------------------------------------------------------------------
+-- The main program is here, which creates an OpenGL window
+-- that displays a triangle with some of its special properties.
+-- The triangle's corners can be dragged and dropped with the mouse.
+--------------------------------------------------------------------------------
+
 module Main
 where
 
 import qualified Graphics.UI.GLUT as GL
 import Data.IORef
 import Control.Monad
+
 import Demos
 import Trihandle
 import Shape

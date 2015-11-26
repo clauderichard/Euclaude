@@ -1,3 +1,8 @@
+--------------------------------------------------------------------------------
+-- Contains functions to generate properties of geometric shapes
+-- (especially properties of a triangle)
+--------------------------------------------------------------------------------
+
 module Geo
 where
 

@@ -1,3 +1,7 @@
+--------------------------------------------------------------------------------
+-- A model that helps with the interface between the mouse and a triangle
+--------------------------------------------------------------------------------
+
 module Trihandle
 where
 

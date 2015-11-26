@@ -1,3 +1,9 @@
+--------------------------------------------------------------------------------
+-- Contains functions that take in some geometric shapes,
+-- and output other geometric shapes.
+-- (they "construct" things, in Euclidean geometry terms)
+--------------------------------------------------------------------------------
+
 module Constructions
 where
 

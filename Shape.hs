@@ -53,6 +53,13 @@ class Polygon a where
   fromCorners :: [Point] -> a
   
 -- instances of the Polygon class
+-- (some abuses, oh well)
+instance Polygon Point where
+  corners p = [p]
+  fromCorners (p:_) = p
+instance Polygon Line where
+  corners (Line a b) = [a,b]
+  fromCorners (a:b:_) = Line a b
 instance Polygon Triangle where
   corners (Triangle a b c) = [a,b,c]
   fromCorners (a:b:c:_) = Triangle a b c
@@ -62,3 +69,6 @@ instance Polygon Tetragon where
 instance Polygon Pentagon where
   corners (Pentagon a b c d e) = [a,b,c,d,e]
   fromCorners (a:b:c:d:e:_) = Pentagon a b c d e
+instance (Polygon a) => Polygon [a] where
+  corners = concatMap corners
+  fromCorners xs = error "woops"

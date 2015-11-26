@@ -11,16 +11,21 @@ module Demos
 import Draw
 import Centres
 import Shape
-import Constructions
+import Geo
 
 --------------------------------------------------------------------------------
+-- Demo type declaration
 
 type Demo = Triangle -> IO ()
 
+--------------------------------------------------------------------------------
+-- The demo that is used by main program
+
 mainDemo :: Demo
-mainDemo = demoCentroid
+mainDemo = demoNinePointCircle
 
 --------------------------------------------------------------------------------
+-- List of demos
 
 demoCentroid :: Demo
 demoCentroid t@(Triangle a b c) = 
@@ -48,42 +53,48 @@ demoCentroid t@(Triangle a b c) =
 --            draw colourCyan (rays gMittenpunkt gOutcenters) t
 --            draw colourCyan (point gMittenpunkt) t
 
--- This is how I want it to be:
--- 
--- demoCentroid t@(Triangle a b c) = 
---     let c = centroid t
---         ms = t `ceviansThrough` c
---      in do
---           drawTriangle white t
---           drawPoint red c
---           drawLines red ms
+demoIncircle t@(Triangle a b c) = 
+    let circ@(Circle c' r') = incircle t
+    in do
+        draw white t
+        draw yellow $ rays c' t
+        draw yellow c'
+        draw yellow circ
 
---demoIncircle t = do
---    draw colourWhite id t
---    draw colourYellow (rays gIncenter gId) t
---    draw colourYellow (point gIncenter) t
---    draw colourYellow (circle gIncenter gInradius) t
---
---demoCircumcircle t = do
---    draw colourWhite id t
---    draw colourCyan (rays gCircumcenter (gCevianIntersects gCentroid)) t
---    draw colourGreen (circle gCircumcenter gCircumradius) t
---
---demoOrthocenter t = do
---    draw (colourFaded colourWhite)
---      (lineSegments (gCevianIntersects gOrthocenter) (gCevianIntersects gCentroid))
---      t
---    draw colourWhite id t
---    -- Need both cevians and rays in case the point is outside the triangle
---    draw (colourFaded colourCyan) (rays gOrthocenter gId) t
---    draw colourCyan (cevians gOrthocenter) t
---    draw colourCyan (point gOrthocenter) t
+demoCircumcircle t = 
+    let circ@(Circle c' r') = circumcircle t
+    in do
+        draw white t
+        draw cyan $ rays c' (midpoints t)
+        draw green circ
 
---demoSymmedian t = do
---    draw colourWhite id t
---    draw colourCyan (cevians gSymmedian) t
---    draw colourCyan (point gSymmedian) t
---
+demoOrthocentre t@(Triangle a b c) = 
+    let o = orthocentre t
+        c = centroid t
+        [ma,mb,mc] = midpoints t
+        [x,y,z] = heightIntersects t
+        hs = heights t
+    in do
+        -- extend sides all the way to height-intersects
+        draw red $ Line x ma
+        draw red $ Line y mb
+        draw red $ Line z mc
+        -- draw triangle on top of the above extensions
+        draw white t
+        -- Draw the heights
+        draw cyan $ hs
+        -- In case the point is outside the triangle
+        draw cyan $ rays o t
+        -- Orthocentre
+        draw cyan o
+
+demoSymmedian t = 
+    let s = symmedianpoint t
+    in do
+        draw white t
+        draw cyan $ rays s t
+        draw cyan s
+
 --demoNagel t = do
 --    draw colourWhite id t
 --    draw colourCyan (cevians gNagel) t
@@ -107,15 +118,23 @@ demoCentroid t@(Triangle a b c) =
 --    draw colourYellow (point gNinePointCenter) t
 --    draw colourYellow (circle gNinePointCenter gNinePointRadius) t
 
---demoNinePointCircle t = do
---    draw colourRed (lineSegments (gCevianIntersects gOrthocenter) (gCevianIntersects gCentroid)) t
---    draw colourWhite id t
---    draw colourCyan (cevians gOrthocenter) t
---    draw colourCyan (rays gOrthocenter gId) t
---    draw colourCyan (points (gCevianIntersects gOrthocenter)) t
---    draw colourGreen (points (gCevianIntersects gCentroid)) t
---    draw colourBlue (raysMidpoints gOrthocenter gId) t
---    draw colourYellow (point gNinePointCenter) t
---    draw colourYellow (circle gNinePointCenter gNinePointRadius) t
+demoNinePointCircle t =
+    let o = orthocentre t
+        c = centroid t
+        [ma,mb,mc] = midpoints t
+        [x,y,z] = heightIntersects t
+    in do
+        -- Orthocentre
+        draw red $ Line x ma
+        draw red $ Line y mb
+        draw red $ Line z mc
+        draw white t
+        draw cyan $ heights t
+        draw cyan $ rays o t
+        draw cyan o
+        draw green (midpoints t)
+        draw blue (map lineMidpoint $ rays o t)
+        draw yellow (ninepointcentre t)
+        draw yellow (ninepointcircle t)
 
 --------------------------------------------------------------------------------

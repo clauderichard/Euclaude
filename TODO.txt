@@ -1,4 +1,4 @@
-1. Make X button work in UI.
+1. Make X button work in UI. (try using Haskell GLFW library)
 2. Fix the viewport code (or add it, it doesn't even exist)
 3. Add graphics functionality to show symbols for:
     orthogonality

@@ -5,7 +5,8 @@
 --------------------------------------------------------------------------------
 
 module Demos
-( mainDemo
+( mainDemo,
+  mainPentagonDemo
 ) where
 
 import Draw
@@ -18,11 +19,16 @@ import Geo
 
 type Demo = Triangle -> IO ()
 
+type PentagonDemo = Pentagon -> IO ()
+
 --------------------------------------------------------------------------------
 -- The demo that is used by main program
 
 mainDemo :: Demo
 mainDemo = demoNinePointCircle
+
+mainPentagonDemo :: PentagonDemo
+mainPentagonDemo = demo5CirclesThingamabob
 
 --------------------------------------------------------------------------------
 -- List of demos
@@ -136,5 +142,39 @@ demoNinePointCircle t =
         draw blue (map lineMidpoint $ rays o t)
         draw yellow (ninepointcentre t)
         draw yellow (ninepointcircle t)
+
+--------------------------------------------------------------------------------
+-- List of pentagon demos
+
+demo5CirclesThingamabob pentagon@(Pentagon a b c d e) =
+    let f = linesIntersection (Line b c) (Line d e)
+        g = linesIntersection (Line c d) (Line e a)
+        h = linesIntersection (Line d e) (Line a b)
+        i = linesIntersection (Line e a) (Line b c)
+        j = linesIntersection (Line a b) (Line c d)
+        kc@(Circle k kr) = circumcircle $ Triangle a g j
+        lc@(Circle l lr) = circumcircle $ Triangle b h f
+        mc@(Circle m mr) = circumcircle $ Triangle c i g
+        nc@(Circle n nr) = circumcircle $ Triangle d j h
+        oc@(Circle o or) = circumcircle $ Triangle e f i
+        p = pointReflect f $ Line l o
+        q = pointReflect g $ Line m k
+        r = pointReflect h $ Line n l
+        s = pointReflect i $ Line o m
+        t = pointReflect j $ Line k n
+        thecircle = circumcircle $ Triangle p q r
+    in do
+    	draw white pentagon
+        draw green kc
+        draw green lc
+        draw green mc
+        draw green nc
+        draw green oc
+        draw red p
+        draw red q
+        draw red r
+        draw red s
+        draw red t
+        draw red thecircle
 
 --------------------------------------------------------------------------------

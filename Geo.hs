@@ -41,15 +41,23 @@ pointRotate angle (Point a b) (Point p q) = Point x y
         x = a + c*pa - s*qb
         y = b + s*pa + c*qb
         
+-- reflect a point across a line (line is a mirror)
+pointReflect :: Point -> Line -> Point
+pointReflect pp@(Point p q) (Line aa@(Point a b) bb@(Point c d)) = Point x y
+  where x = p + m*(b-d)/ab
+        y = q + m*(c-a)/ab
+        m = 2 * linesCrossProduct (Line bb pp) (Line aa pp)
+        ab = (a-c)*(a-c) + (b-d)*(b-d)
+        
 linesCrossProduct :: Line -> Line -> R
 linesCrossProduct (Line (Point a b) (Point c d)) (Line (Point e f) (Point g h))
-  = (c-a)*(h-f) - (b-d)*(g-e)
+  = (c-a)*(h-f) - (d-b)*(g-e)
 
 linesIntersection :: Line -> Line -> Point
 linesIntersection l1@(Line a b) l2@(Line c d)
-  = let t = linesCrossProduct (Line c d) (Line a c)
-        u = linesCrossProduct (Line c d) (Line c b)
-    in pointsWeightedAverage [t,u] [b,a]
+  = let t = linesCrossProduct (Line b d) (Line b c)
+        u = linesCrossProduct (Line a c) (Line a d)
+    in pointsWeightedAverage [t,u] [a,b]
 
 --linesExtendToIntersection :: Line -> Line -> (Line,Line)
 --linesExtendToIntersection

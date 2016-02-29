@@ -1,18 +1,19 @@
-1. Make X button work in UI. (try using Haskell GLFW library)
-2. Fix the viewport code (or add it, it doesn't even exist)
-3. Add graphics functionality to show symbols for:
+. Add Pentagon demo (circle of other intersections of circumcircles)
+. Make X button work in UI. (try using Haskell GLFW library)
+. Fix the viewport code (or add it, it doesn't even exist)
+. Add graphics functionality to show symbols for:
     orthogonality
     length equality
     angle equality
     parallel lines
-4. Standardize to the following demos:
+. Standardize to the following demos:
 	9 point circle
 	centroid
 	orthocenter
 	circumcenter
 	incenter
    Choose them from a menu in the app. Start with 9 point circle by default.
-5. Add all my favorite demos:
+. Add all my favorite demos:
 	Napoleon triangle + center, both inner and outer.
 	Nagel point
 	Symmedian point

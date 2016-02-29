@@ -19,18 +19,20 @@ import Shape
 windowTitle :: String
 windowTitle = "Euclaude"
 
+windowWidth = 300
+windowHeight = 300
  
 main :: IO ()
 main = do
   (_progName, _args) <- GL.getArgsAndInitialize
   _window <- GL.createWindow windowTitle
-  thandle <- newIORef makeTrihandle
-  GL.keyboardMouseCallback GL.$= Just (keyboardMouse thandle)
-  GL.displayCallback GL.$= display thandle
+  phandle <- newIORef makePolyhandle5
+  GL.keyboardMouseCallback GL.$= Just (keyboardMouse phandle)
+  GL.displayCallback GL.$= display phandle
   GL.reshapeCallback GL.$= Just reshape
-  GL.motionCallback GL.$= Just (mouseMotion thandle)
-  GL.passiveMotionCallback GL.$= Just (mouseMotion thandle)
-  reshape (GL.Size 300 300)
+  GL.motionCallback GL.$= Just (mouseMotion phandle)
+  GL.passiveMotionCallback GL.$= Just (mouseMotion phandle)
+  reshape (GL.Size windowWidth windowHeight)
   GL.mainLoop
   
 transInterval :: (Integral i, Floating r) => i -> i -> r -> r -> i -> r
@@ -40,35 +42,37 @@ transInterval oldMin oldMax newMin newMax oldX = numer / denom
 
 posFromGL :: GL.Position -> Point
 posFromGL (GL.Position a b) = Point a' b'
-  where oldMin = 0
-        oldMax = 300
+  where oldMinW = 0
+        oldMaxW = windowWidth
+        oldMinH = 0
+        oldMaxH = windowHeight
         newMin = -1
         newMax = 1
-        a' = transInterval oldMin oldMax newMin newMax $ a
-        b' = transInterval oldMin oldMax newMax newMin $ b
+        a' = transInterval oldMinW oldMaxW newMin newMax $ a
+        b' = transInterval oldMinH oldMaxH newMax newMin $ b
   
-keyboardMouse :: IORef Trihandle -> GL.KeyboardMouseCallback
-keyboardMouse thandle key GL.Down _ position = do
-    thandle GL.$~! trihandleDown (posFromGL position)
-    display thandle
-keyboardMouse thandle key GL.Up _ position = do
-    thandle GL.$~! trihandleUp (posFromGL position)
-    display thandle
+keyboardMouse :: IORef Polyhandle -> GL.KeyboardMouseCallback
+keyboardMouse phandle key GL.Down _ position = do
+    phandle GL.$~! polyhandleDown (posFromGL position)
+    display phandle
+keyboardMouse phandle key GL.Up _ position = do
+    phandle GL.$~! polyhandleUp (posFromGL position)
+    display phandle
 
-mouseMotion :: IORef Trihandle -> GL.MotionCallback
-mouseMotion thandle position = do
-    thandle GL.$~! trihandleMove (posFromGL position)
-    display thandle
+mouseMotion :: IORef Polyhandle -> GL.MotionCallback
+mouseMotion phandle position = do
+    phandle GL.$~! polyhandleMove (posFromGL position)
+    display phandle
 
 reshape :: GL.ReshapeCallback
 reshape size = do
   GL.viewport GL.$= (GL.Position 0 0, size)
   GL.postRedisplay Nothing
  
-display :: IORef Trihandle -> GL.DisplayCallback
-display thandle = do
+display :: IORef Polyhandle -> GL.DisplayCallback
+display phandle = do
     GL.clear [GL.ColorBuffer]
-    th <- readIORef thandle
-    mainDemo $ trihandleTriangle th
+    ph <- readIORef phandle
+    mainPentagonDemo $ polyhandlePentagon ph
     GL.flush
 

@@ -4,6 +4,8 @@
 -- (the list of properties and colours is different for each demo)
 --------------------------------------------------------------------------------
 
+-- hello.
+
 module Demos
 ( mainDemo,
   mainPentagonDemo

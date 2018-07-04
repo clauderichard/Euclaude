@@ -8,11 +8,9 @@ When you have Haskell (specifically ghc) installed, open a command line from ins
 %> ghc main
 Then you can run the newly created main.exe.
 
-When the program is running, you can grab each of the triangle's three corners with your mouse and drag it around and see how the
-rest of the geometrical features
+When the program is running, you can grab each of the triangle's three corners with your mouse and drag it around,
+and see in real-time how the rest of the geometrical features move as the triangle changes shape.
 
 # Switching between demos
-If you open the file Demos.hs you will see that mainDemo is assigned the value demoCentroid.
-(The centroid is just the intersection of the three medians of the triangle.
-Median means a line from a corner to the midpoint of the opposite side.)
-You can change this to another uncommented demo found in that file, and then recompile main.exe to get that demo.
+If you open the file Demos.hs you will see that mainDemo is assigned a value from the demos below.
+You can change this to any other demo found in that file, and then recompile main.exe to interact with that demo.

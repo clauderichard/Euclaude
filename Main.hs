@@ -73,6 +73,7 @@ display :: IORef Polyhandle -> GL.DisplayCallback
 display phandle = do
     GL.clear [GL.ColorBuffer]
     ph <- readIORef phandle
-    mainPentagonDemo $ polyhandlePentagon ph
+    mainDemo $ polyhandleTriangle ph
+    --mainPentagonDemo $ polyhandlePentagon ph
     GL.flush
 

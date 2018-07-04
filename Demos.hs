@@ -1,39 +1,20 @@
---------------------------------------------------------------------------------
--- Contains predefined demos, which are functions that take in a Triangle,
--- and draw some of its properties using the Draw module.
--- (the list of properties and colours is different for each demo)
---------------------------------------------------------------------------------
-
--- hello.
-
 module Demos
-( mainDemo,
-  mainPentagonDemo
+( mainDemo
 ) where
 
 import Draw
 import Centres
 import Shape
-import Geo
+import Constructions
 
 --------------------------------------------------------------------------------
--- Demo type declaration
 
 type Demo = Triangle -> IO ()
 
-type PentagonDemo = Pentagon -> IO ()
-
---------------------------------------------------------------------------------
--- The demo that is used by main program
-
 mainDemo :: Demo
-mainDemo = demoNinePointCircle
-
-mainPentagonDemo :: PentagonDemo
-mainPentagonDemo = demo5CirclesThingamabob
+mainDemo = demoNapoleonTriangle True
 
 --------------------------------------------------------------------------------
--- List of demos
 
 demoCentroid :: Demo
 demoCentroid t@(Triangle a b c) = 
@@ -43,140 +24,114 @@ demoCentroid t@(Triangle a b c) =
             draw red $ t `ceviansThrough` c'
             draw red c'
     
---demoNapoleonTriangleOuter :: Triangle -> IO ()
---demoNapoleonTriangleOuter t = do
---    draw colourRed (triangles outerEquilateralTriangles) t
---    draw colourGreen (triangle napoleonTriangle) t
---    draw colourWhite id t
-
---demoMittenpunkt :: Demo
---demoMittenpunkt t@(Triangle a b c) = 
---    let c' = centroid t
---    in do
---            draw white t
---            draw red $ t `ceviansThrough` gCentroid
---            draw red centroid
---            draw green (points gOutcenters) t
---            draw colourGreen (circles gOutcenters gOutradii) t
---            draw colourCyan (rays gMittenpunkt gOutcenters) t
---            draw colourCyan (point gMittenpunkt) t
-
-demoIncircle t@(Triangle a b c) = 
-    let circ@(Circle c' r') = incircle t
+demoSymmedian :: Demo
+demoSymmedian t@(Triangle a b c) = 
+    let c' = symmedianpoint t
     in do
-        draw white t
-        draw yellow $ rays c' t
-        draw yellow c'
-        draw yellow circ
-
-demoCircumcircle t = 
-    let circ@(Circle c' r') = circumcircle t
-    in do
-        draw white t
-        draw cyan $ rays c' (midpoints t)
-        draw green circ
-
-demoOrthocentre t@(Triangle a b c) = 
-    let o = orthocentre t
-        c = centroid t
-        [ma,mb,mc] = midpoints t
-        [x,y,z] = heightIntersects t
-        hs = heights t
-    in do
-        -- extend sides all the way to height-intersects
-        draw red $ Line x ma
-        draw red $ Line y mb
-        draw red $ Line z mc
-        -- draw triangle on top of the above extensions
-        draw white t
-        -- Draw the heights
-        draw cyan $ hs
-        -- In case the point is outside the triangle
-        draw cyan $ rays o t
-        -- Orthocentre
-        draw cyan o
-
-demoSymmedian t = 
-    let s = symmedianpoint t
-    in do
-        draw white t
-        draw cyan $ rays s t
-        draw cyan s
-
---demoNagel t = do
---    draw colourWhite id t
---    draw colourCyan (cevians gNagel) t
---    draw colourCyan (point gNagel) t
+            draw white t
+            draw red $ t `ceviansThrough` c'
+            draw red c'
     
---demoEulerLine t = do
---    draw (colourFaded colourWhite)
---      (lineSegments (gCevianIntersects gOrthocenter) (gCevianIntersects gCentroid))
---      t
---    draw colourWhite id t
---    draw colourCyan (cevians gOrthocenter) t
---    draw colourCyan (rays gOrthocenter gId) t
---    draw colourCyan (point gOrthocenter) t
---    draw colourGreen (cevians gCentroid) t
---    draw colourGreen (point gCentroid) t
---    draw colourBlue (point gCircumcenter) t
---    draw colourBlue (circle gCircumcenter gCircumradius) t
---    draw colourMagenta (point gExeter) t
---    draw colourYellow (lineSegment gOrthocenter gExeter) t
---    draw colourYellow (lineSegment gCircumcenter gExeter) t
---    draw colourYellow (point gNinePointCenter) t
---    draw colourYellow (circle gNinePointCenter gNinePointRadius) t
+demoOrthocentre :: Demo
+demoOrthocentre t@(Triangle a b c) = 
+    let c' = orthocentre t
+    in do
+            draw white t
+            draw red $ t `ceviansThrough` c'
+            draw red c'
+    
+demoMittenpunkt :: Demo
+demoMittenpunkt t@(Triangle a b c) = 
+    let mp = mittenpunkt t
+    in do
+            draw white t
+            draw green $ outcircles t
+            draw green $ outcentres t
+            draw cyan $ rays mp (outcentres t)
+            draw cyan $ mp
 
-demoNinePointCircle t =
+demoIncircle :: Demo
+demoIncircle t@(Triangle a b c) = 
+    let ic@(Circle c r) = incircle t
+    in do
+            draw white t
+            draw yellow $ rays c (corners t)
+            draw yellow $ c
+            draw yellow $ ic
+
+demoCircumcircle :: Demo
+demoCircumcircle t@(Triangle a b c) = 
+    let cc@(Circle c r) = circumcircle t
+    in do
+            draw white t
+            draw cyan $ rays c (sidemidpoints t)
+            draw green $ c
+            draw green $ cc
+
+demoNinePointCircle :: Demo
+demoNinePointCircle t@(Triangle a b c) = 
     let o = orthocentre t
-        c = centroid t
-        [ma,mb,mc] = midpoints t
-        [x,y,z] = heightIntersects t
+        heights = t `ceviansThrough` o
+        hs = map (\(Line a b) -> b) heights
+        npc@(Circle c r) = ninepointcircle t
     in do
-        -- Orthocentre
-        draw red $ Line x ma
-        draw red $ Line y mb
-        draw red $ Line z mc
-        draw white t
-        draw cyan $ heights t
-        draw cyan $ rays o t
-        draw cyan o
-        draw green (midpoints t)
-        draw blue (map lineMidpoint $ rays o t)
-        draw yellow (ninepointcentre t)
-        draw yellow (ninepointcircle t)
+            draw white $ t
+            draw cyan $ heights
+            draw blue $ raysMidpoints o (corners t)
+            draw red $ sidemidpoints t
+            draw yellow $ c
+            draw yellow $ npc
+            draw cyan $ hs
 
---------------------------------------------------------------------------------
--- List of pentagon demos
-
-demo5CirclesThingamabob pentagon@(Pentagon a b c d e) =
-    let f = linesIntersection (Line b c) (Line d e)
-        g = linesIntersection (Line c d) (Line e a)
-        h = linesIntersection (Line d e) (Line a b)
-        i = linesIntersection (Line e a) (Line b c)
-        j = linesIntersection (Line a b) (Line c d)
-        kc@(Circle k kr) = circumcircle $ Triangle a g j
-        lc@(Circle l lr) = circumcircle $ Triangle b h f
-        mc@(Circle m mr) = circumcircle $ Triangle c i g
-        nc@(Circle n nr) = circumcircle $ Triangle d j h
-        oc@(Circle o or) = circumcircle $ Triangle e f i
-        p = pointReflect f $ Line l o
-        q = pointReflect g $ Line m k
-        r = pointReflect h $ Line n l
-        s = pointReflect i $ Line o m
-        t = pointReflect j $ Line k n
-        thecircle = circumcircle $ Triangle p q r
+demoOuterNapoleonTriangle :: Demo
+demoOuterNapoleonTriangle t =
+    let ots = outerEquilateralTriangles t
     in do
-    	draw white pentagon
-        draw green kc
-        draw green lc
-        draw green mc
-        draw green nc
-        draw green oc
-        draw red p
-        draw red q
-        draw red r
-        draw red s
-        draw red t
-        draw red thecircle
+            draw red $ ots
+            draw green $ outerNapoleonTriangle t
+            draw white $ t
+
+-- isouter is True if you're using outer equilateral triangles, False for inner.
+demoNapoleonTriangle :: Bool -> Demo
+demoNapoleonTriangle isouter t =
+    let ets = sideEquilateralTriangles isouter t
+        nt = napoleonTriangle isouter t
+    in do
+            draw red $ ets
+            draw green $ nt
+            draw white $ t
+
+demoNagel :: Demo
+demoNagel t@(Triangle a b c) =
+    let n = nagelpoint t
+    in do
+            draw white $ t
+            draw cyan $ n
+            draw cyan $ t `ceviansThrough` n
+    
+demoEulerLine :: Demo
+demoEulerLine t@(Triangle a b c) =
+    let o = orthocentre t
+        hs = cevianIntersects t o
+        cd = centroid t
+        ms = cevianIntersects t cd
+        cc@(Circle ccc ccr) = circumcircle t
+        ex = exeterpoint t
+        npc@(Circle npcc npcr) = ninepointcircle t
+    in do
+            draw (faded white) $ zipWith Line hs ms
+            draw white $ t
+            draw cyan $ t `ceviansThrough` o
+            draw cyan $ rays o (corners t)
+            draw cyan $ o
+            draw green $ t `ceviansThrough` cd
+            draw green $ cd
+            draw blue $ ccc
+            draw blue $ cc
+            draw magenta $ ex
+            draw yellow $ Line o ex
+            draw yellow $ Line ccc ex
+            draw yellow $ npcc
+            draw yellow $ npc
 
 --------------------------------------------------------------------------------

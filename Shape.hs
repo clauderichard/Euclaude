@@ -1,15 +1,3 @@
---------------------------------------------------------------------------------
--- Contains definitions for various shapes in Euclidean geometry.
--- Includes:
---   * Real number (type definition to avoid confusion between float and double)
---   * Point (in terms of cartesian coordinates)
---   * Line (in terms of 2 points)
---   * Various polygons (in terms of points)
---   * Circle (in terms of center and radius)
---   * Polygon class (map between a polygon datatype and a list of points)
---   * Miscellaneous functions dealing with only the above
---------------------------------------------------------------------------------
-
 module Shape
 where
 
@@ -27,6 +15,17 @@ data Circle = Circle Point R
 -- get the endpoints of a line
 linePoints :: Line -> [Point]
 linePoints (Line a b) = [a,b]
+
+-- This is really used for vectors (difference between two points) but I will use Point type for vectors.
+pointCrossProduct :: Point -> Point -> R
+pointCrossProduct (Point a b) (Point c d) = a*d - b*c
+        
+-- Whether 3 points go counterclockwise or not
+-- (used for constructing the outer Napoleon triangle for example)
+isCounterClockwise :: Point -> Point -> Point -> Bool
+isCounterClockwise a b c = pointCrossProduct (subp b a) (subp c a) > 0
+  where subp (Point e f) (Point g h) = Point (e-g) (f-h)
+        
 
 -- from a list of points, get a shape.
 -- The list has to have exactly the right number of entries.
@@ -53,13 +52,6 @@ class Polygon a where
   fromCorners :: [Point] -> a
   
 -- instances of the Polygon class
--- (some abuses, oh well)
-instance Polygon Point where
-  corners p = [p]
-  fromCorners (p:_) = p
-instance Polygon Line where
-  corners (Line a b) = [a,b]
-  fromCorners (a:b:_) = Line a b
 instance Polygon Triangle where
   corners (Triangle a b c) = [a,b,c]
   fromCorners (a:b:c:_) = Triangle a b c
@@ -69,6 +61,3 @@ instance Polygon Tetragon where
 instance Polygon Pentagon where
   corners (Pentagon a b c d e) = [a,b,c,d,e]
   fromCorners (a:b:c:d:e:_) = Pentagon a b c d e
-instance (Polygon a) => Polygon [a] where
-  corners = concatMap corners
-  fromCorners xs = error "woops"

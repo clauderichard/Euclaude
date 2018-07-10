@@ -5,7 +5,9 @@ Euclaude = Euclid + Claude.  A Haskell program for manipulating a triangle and d
 You will need to install Haskell on your system before you can run Euclaude.
 When you have Haskell (specifically ghc) installed, open a command line from inside the project file
 (in the directory where the .hs files are), and run the following command:
+```
 %> ghc main
+```
 Then you can run the newly created main.exe.
 
 When the program is running, you can grab each of the triangle's three corners with your mouse and drag it around,

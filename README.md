@@ -1,5 +1,5 @@
 # Euclaude
-Euclaude = Euclid + Claude.  Haskell program for manipulating a triangle and displaying its special centers, circles, etc.
+Euclaude = Euclid + Claude.  A Haskell program for manipulating a triangle and displaying its special properties based on Euclidean geometry, e.g. the triangle's centroid, or its circumcircle.
 
 # Installing and running
 You will need to install Haskell on your system before you can run Euclaude.
